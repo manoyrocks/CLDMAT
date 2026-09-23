@@ -27,7 +27,7 @@ function strings(value: unknown, out: string[] = []): string[] {
 
 const RANK: Record<Tier, number> = { Unverified: 0, Emerging: 1, Verified: 2 };
 
-export function checkItem(item: Item, kind: 'practice' | 'explainer', now: Date): ComplianceResult {
+export function checkItem<T extends Item>(item: T, kind: 'practice' | 'explainer', now: Date): ComplianceResult {
   const violations = [...metaErrors(item)];
   const warnings: string[] = [];
 

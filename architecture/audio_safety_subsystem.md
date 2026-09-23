@@ -21,7 +21,7 @@ source(s) ──► voice gain (per-sound fade-in) ──► session gain (user 
 | Layer | What it protects against | Guarantee |
 | --- | --- | --- |
 | L1 content normalisation | Loud source files or synthesis | Synthesised voices peak at ≤ −6 dBFS pre-gain; recordings are peak-normalised to −6 dBFS on save (REQ-M3-03) |
-| L2 session gain clamp | User sets the volume too high; a bug requests a high gain | `clampGain()` never returns more than the mode ceiling |
+| L2 session gain clamp | User sets the volume too high; a bug requests a high gain | `clampDb()` and `safeGain()` never return more than the mode ceiling |
 | L3 compressor | Transient build-up from overlapping voices | Soft limiting |
 | L4 hard clipper | Everything upstream failing | **No sample reaching the destination exceeds the ceiling.** This is verified by an offline render test with a +20 dB overdriven source |
 
@@ -31,7 +31,7 @@ source(s) ──► voice gain (per-sound fade-in) ──► session gain (user 
 | --- | --- | --- |
 | Output ceiling (peak) | **−12 dBFS** | −6 dBFS |
 | Default volume | −20 dBFS | −14 dBFS |
-| Minimum fade-in | 500 ms | 250 ms |
+| Minimum fade-in (session gain, from silence or after Stop) | 500 ms | 250 ms |
 | Max volume increase rate | +6 dB/s | +12 dB/s |
 | Volume decrease | Immediate (20 ms ramp) | Immediate |
 | Stop / Too Loud latency budget | < 200 ms to silence (implementation target: 30 ms ramp) | Same |
@@ -55,6 +55,14 @@ dBFS cannot be converted to SPL without knowing the device, route and system vol
 | After a stop | The next session starts **two steps lower** (not below −60 dBFS) |
 | Lockout | Two consecutive stopped sessions → the plan locks for 24 h, with advice to contact the OT or audiologist |
 | Session length | Maximum 5 minutes of exposure audio, then an automatic fade-out |
+
+### 4.1 Fade-in semantics (clarified in Phase 2)
+REQ-SAF-03 is applied to the **session gain**. Whenever sound starts after at least 1 s of silence, or after any Stop, the whole output ramps from zero over the mode minimum (500 ms in Child Mode). While a child is actively tapping an instrument, each individual hit keeps a short 5–30 ms attack, so the drum still sounds like a drum; the burst as a whole always starts from silence. Graded exposure always fades in from zero to its own level and silences any other voice first.
+
+### 4.2 Level clamping rules (defect DEF-001, fixed in Phase 2)
+- **User volume** is clamped into [floor, ceiling] (`clampDb`).
+- **Explicit exposure levels** are only ever clamped **down**: `min(level, exposure ceiling, mode ceiling)`, with −60 dBFS as the minimum. An early build clamped exposure through the user-volume floor (−36 dBFS), so a −45 dBFS step played 9 dB too loud. The e2e test AS-07 caught this before release; see `tests/qa_report.md`.
+- While exposure audio plays, the volume buttons cannot raise the level (`exposureActive` lock).
 
 ## 5. Stop path (REQ-SAF-04)
 `engine.stopAll()` is synchronous. It (1) cancels scheduled values on the session gain, (2) ramps to 0 over 30 ms, (3) stops and disconnects all sources at +60 ms, and (4) records `performance.now()` deltas for tests. The Stop control is a native `<button>` fixed at the top of every child-facing screen. It has a `pointerdown` handler, which fires before `click`, and responds to the keyboard.

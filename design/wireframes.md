@@ -63,7 +63,7 @@ Low-fidelity wireframes are below. The high-fidelity reference is the built MVP.
                  (grown-ups ◔)   ← hold 2 s
 ```
 
-## W-05 Calm corner — REQ-M4-01..03
+## W-05 Calm corner — REQ-M4-01, REQ-M4-02, REQ-M4-03
 ```
 │ ✋ STOP – TOO LOUD              │
 │  [track A] [track B] [track C] │  picture choice
