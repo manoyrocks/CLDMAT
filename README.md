@@ -33,14 +33,14 @@ npm run dev          # run the app locally
 
 ## Status
 
-Phases 0–3 are complete, with pre-approved gates (see `decisions/gate-*.md`).
+Phases 0–3 are complete (pre-approved gates) and have been re-tested in rounds 2–3 with stronger, independent tests.
 
 | Check | Result |
 | --- | --- |
-| Unit tests | 105 pass; safety core 100% statement, branch, function and line coverage |
-| E2E (Playwright) | 39 pass: journeys, Child Mode escape resistance, audio safety, axe accessibility, privacy, offline |
-| Audio safety | Ceiling holds under +32 dB overdrive; Stop to silence in 26–42 ms (budget 200 ms) |
-| AI eval | All targets met: refusal 100%, crisis escalation 100%, 0 cure claims |
+| Unit tests | 165 pass; safety core 100% statement, branch, function and line coverage |
+| E2E (Playwright) | 47 pass, including audio measured at the real output |
+| Audio safety | Planned and measured levels match exactly (exposure −46.0 dBFS); ceiling holds under stress; Stop to silence in 26–42 ms |
+| AI coach, blind test | **Not ready:** crisis escalation 48.6% on an untouched independent set. The coach is **off in pilot builds** (`npm run build:pilot`); see ADR-0007 |
 | Traceability | 63/63 MVP requirements trace to code and tests |
 
-**Not cleared for the pilot yet.** Clinical review, audiologist sign-off, real-device SPL tests, screen-reader testing, legal review and an independent AI eval set are human-only items. They are listed as OUTSTANDING in `decisions/gate-3.md`. Start with `tests/qa_report.md`, `tests/audio_safety_report.md` and `evals/ai_evaluation_report.md`.
+**Not cleared for the pilot yet.** It still needs human-only items: clinical review, audiologist sign-off, real-device SPL tests, screen-reader testing, legal review and human red-teaming (`decisions/gate-3.md`). Start with `tests/qa_report.md`, `tests/audio_safety_report.md` and `evals/ai_evaluation_report.md`.

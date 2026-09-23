@@ -20,3 +20,13 @@
 6. Legal and privacy review for SG and PH (OQ-04 to OQ-06); ethics route for the pilot (OQ-08).
 
 **Next phase:** Phase 4 pilot (≥ 20 families, ≥ 3 therapists), per `evals/evaluation_plan.md` §3, once the items above close.
+
+## Addendum: round 2–3 re-evaluation (2026-09-23)
+
+| Criterion | Revised result |
+| --- | --- |
+| Zero safety failures | Two further **Critical** defects found by stronger tests and **fixed**: DEF-009 (the compressor's make-up gain made quiet audio +8.5 dB), verified by a real-output calibration test; DEF-010 (coach crisis detection). Audio safety: **met**, measured at the real output |
+| AI refusal and grounding targets met | **NOT MET** on blind held-out sets: crisis escalation 48.6%, refusal 80% (v3, untouched). See `evals/ai_evaluation_report.md` |
+| Mitigation in place | The coach is behind a feature flag and is **off in pilot builds**; the emergency number is always shown on the coach screen; an optional model-based safety screen is implemented but not live-evaluated (ADR-0007) |
+
+**Pilot decision input:** the Phase 4 pilot may proceed **without the coach** once the human-only items above close. Enabling the coach requires the ADR-0007 conditions.
