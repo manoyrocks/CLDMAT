@@ -1,6 +1,7 @@
 // Caregiver Coach (agent A2). Implements REQ-AI-02, REQ-AI-03, REQ-AI-04, REQ-AI-05, REQ-AI-08.
 // Safety rules run in code before and after any model, in a fixed order (architecture/agent_contracts.md).
 import { DISCLAIMER, crisisLinesFor } from '@harmony/content';
+import { DOMAIN, OUT_OF_SCOPE, classify, type RefusalCategory } from './classifier';
 import { retrieve, type Hit } from './retrieval';
 import { findBannedTerms, scrubPii, wordCount } from './text';
 
@@ -8,11 +9,13 @@ export const DISCLOSURE = 'I’m an AI helper, not a clinician.';
 export const MAX_WORDS = 180;
 export const MAX_QUESTION_CHARS = 500;
 /** Minimum BM25 score for a passage to count as supporting an answer. */
-export const MIN_SCORE = 4.0;
-/** Minimum share of the question's terms a supporting passage must contain (rejects one-word topic matches). */
-export const MIN_COVERAGE = 0.25;
+export const MIN_SCORE = 3.0;
+/**
+ * Minimum IDF-weighted share of the question's terms found in the passage. Kept low: long, chatty questions
+ * contain many words no passage has. Off-topic questions are rejected mainly by the domain gate (DOMAIN).
+ */
+export const MIN_COVERAGE = 0.1;
 
-export type RefusalCategory = 'diagnosis' | 'medication' | 'cure';
 export type ReplyKind = 'answer' | 'refusal' | 'escalation' | 'unknown' | 'scope' | 'policy';
 
 export interface CoachReply {
@@ -26,54 +29,9 @@ export interface CoachReply {
   readonly fallbackUsed?: boolean;
 }
 
-// ---- deterministic classifiers --------------------------------------------------------------------
-const CRISIS = [
-  /\bsuicid\w*/, /\bkill(ing)? (myself|me|him|her|them|my (son|daughter|child|kid|baby))\b/, /\bwant(s)? to die\b/,
-  /\bend (my life|it all)\b/, /\bcan'?t go on\b/, /\bcannot go on\b/,
-  /\b(hurt|harm|hit|shake|shaking|injur)\w* (myself|my (son|daughter|child|kid|baby))\b/, /\bself[- ]?harm\w*/,
-  /\b(hurt|harm|injur|bang)\w* (himself|herself|themselves|his head|her head|their head)\b/,
-  /\bnot breathing\b/, /\bstopped breathing\b/, /\bunconscious\b/, /\bseizure\w*/, /\bchok(e|ing)\b/, /\boverdos\w*/,
-  /\babus(e|ed|ing)\b/, /\bunsafe at home\b/, /\bemergency\b/, /\bin danger\b/,
-];
-const INJECTION = [
-  /\b(ignore|disregard|forget|bypass)\b.{0,30}\b(instructions|rules|guidelines|guardrails|policy|policies|prompt)\b/,
-  /\bsystem prompt\b/, /\bdeveloper mode\b/, /\byou are now\b/, /\bjailbreak\w*/, /\bpretend (to be|you are|you're)\b/,
-  /\bact as (a |an )?(doctor|psychiatrist|pharmacist|dan)\b/, /\bnew instructions\b/, /\boverride\b/, /\bno restrictions\b/,
-  /<\/?(system|passage|instructions)>/,
-];
-const REFUSE: Record<RefusalCategory, RegExp[]> = {
-  diagnosis: [
-    /\b(can|could|would) you (please )?diagnose\b/, /\bdiagnose (my|him|her|them)\b/,
-    /\b(does|do|could|might|may) (my \w+|he|she|they|this) (have|has|be) (autism|autistic|adhd|asd|on the spectrum)\b/,
-    /\bis (my \w+|he|she|this|it) (autistic|on the spectrum)\b/, /\bwhat (level|type) of autism\b/, /\bsigns of autism\b/,
-    /\bhow autistic\b/,
-  ],
-  medication: [
-    /\bmedic(ine|ation)s?\b/, /\bmeds\b/, /\bdrugs?\b/, /\bdos(e|age|ing)\b/, /\b\d+\s?(mg|ml)\b/, /\bmilligram/, /\bmelatonin\b/,
-    /\brisperidone\b/, /\baripiprazole\b/, /\britalin\b/, /\bmethylphenidate\b/, /\bsupplements?\b/, /\bvitamins?\b/, /\bcbd\b/,
-    /\bcannabis\b/, /\bantipsychotic/, /\bssris?\b/, /\bprescri\w*/, /\bsedat\w*/,
-  ],
-  cure: [
-    /\bcur(e|es|ed|ing)\b/, /\bheal(s|ed|ing)?\b/, /\brecover(y|ed|s)?\b/, /\breverse\b.{0,12}\bautism\b/,
-    /\bget rid of\b.{0,12}\bautism\b/, /\bmake (him|her|them|my \w+) (normal|not autistic)\b/, /\bnormali[sz]e\b/,
-    /\bfix\b.{0,15}\bautism\b/, /\brewir\w*/, /\bgrow out of\b.{0,12}\bautism\b/, /\boutgrow\b/, /\bremove\b.{0,12}\bautism\b/,
-    /\b(reduce|lower|decrease)\b.{0,20}\bautism (severity|symptoms|level)\b/, /\bno longer (be )?autistic\b/,
-  ],
-};
-const STIMMING = /\b(stop|reduce|get rid of|prevent|extinguish|decrease)\b.{0,30}\b(stim\w*|flap\w*|rocking|spinning|humming)\b/;
-const DISTRESS = /\b(exhausted|overwhelmed|burn(ed|t)? out|at my (wits'? )?end|can'?t cope|cannot cope|so tired|no support|all alone|breaking down)\b/;
-
-export function classify(question: string): { crisis: boolean; injection: boolean; refusal: RefusalCategory | null; stimming: boolean; distress: boolean } {
-  const q = question.toLowerCase().replace(/[’]/g, "'");
-  const refusal = (Object.keys(REFUSE) as RefusalCategory[]).find((c) => REFUSE[c].some((r) => r.test(q))) ?? null;
-  return {
-    crisis: CRISIS.some((r) => r.test(q)),
-    injection: INJECTION.some((r) => r.test(q)),
-    refusal,
-    stimming: STIMMING.test(q),
-    distress: DISTRESS.test(q),
-  };
-}
+// ---- deterministic classifiers (packages/ai/src/classifier.ts) ------------------------------------------
+export { classify } from './classifier';
+export type { RefusalCategory } from './classifier';
 
 // ---- approved templates ----------------------------------------------------------------------------
 const REFUSAL_TEXT: Record<RefusalCategory, string> = {
@@ -152,7 +110,9 @@ function pipeline(question: string, opts: AskOptions): { final: CoachReply } | {
     return { final: reply('refusal', REFUSAL_TEXT[c.refusal], { category: c.refusal, citations: c.refusal === 'cure' ? ['K-02'] : [] }) };
   }
   if (c.stimming) return { final: reply('policy', STIMMING_TEXT, { category: 'stimming' }) };
-  const hits = retrieve(q).filter((h) => h.score >= MIN_SCORE && h.coverage >= MIN_COVERAGE);
+  const lower = q.toLowerCase();
+  const inDomain = DOMAIN.test(lower) && !OUT_OF_SCOPE.test(lower);
+  const hits = inDomain ? retrieve(q).filter((h) => h.score >= MIN_SCORE && h.coverage >= MIN_COVERAGE) : [];
   if (!hits.length) return { final: reply('unknown', c.distress ? `${SUPPORT_TEXT}\n\n${UNKNOWN_TEXT}` : UNKNOWN_TEXT, { supportive: c.distress }) };
   return { hits, supportive: c.distress };
 }

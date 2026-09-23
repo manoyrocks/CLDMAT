@@ -13,7 +13,9 @@ export default defineConfig({
   use: {
     baseURL: 'http://localhost:4173',
     ...devices['Pixel 7'],
-    launchOptions: { executablePath, args: ['--autoplay-policy=user-gesture-required'] },
+    // Fake microphone (a test tone) so recording flows can be exercised end to end (AS-09).
+    permissions: ['microphone'],
+    launchOptions: { executablePath, args: ['--autoplay-policy=user-gesture-required', '--use-fake-device-for-media-stream', '--use-fake-ui-for-media-stream'] },
   },
   webServer: {
     command: 'npx vite preview --port 4173 --strictPort',

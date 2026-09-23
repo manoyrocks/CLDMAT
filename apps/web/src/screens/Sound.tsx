@@ -7,6 +7,7 @@ import {
 } from '@harmony/core';
 import { EDUCATION, PLACES, SOUND_TYPES, claimById } from '@harmony/content';
 import { engine } from '../audio/engine';
+import { canRecord, loadRecording, record, saveRecording } from '../audio/recordings';
 import { Icon } from '../components/Icon';
 import { Scale04, Screen, Segmented, StopBar, TierChip } from '../components/ui';
 import { t } from '../lib/i18n';
@@ -159,10 +160,19 @@ export function Strategies() {
 
 // ---- Graded exposure (REQ-M5-05, REQ-SAF-05, REQ-SAF-06) ------------------------------------------------
 type Synth = 'hum' | 'whirr' | 'beep' | 'bell';
+/** Recording key and plan sound ID for the family's own recording of the difficult sound. */
+export const OWN_SOUND = 'own-recording';
 
 export function Exposure() {
   const { data, repo, refresh, go } = useStore();
-  const practice = SOUND_TYPES.filter((s) => s.synth);
+  const [hasOwn, setHasOwn] = useState(false);
+  const [recording, setRecording] = useState<AbortController | null>(null);
+  useEffect(() => { loadRecording(OWN_SOUND).then((b) => setHasOwn(!!b)).catch(() => setHasOwn(false)); }, []);
+  // Built-in practice sounds, plus the family's own recording of the difficult sound once made (C-026, L-03).
+  const practice: { id: string; label: string; synth?: Synth }[] = [
+    ...SOUND_TYPES.filter((s) => s.synth).map((s) => ({ id: s.id, label: s.label, synth: s.synth as Synth })),
+    ...(hasOwn ? [{ id: OWN_SOUND, label: t('exposure.ownLabel') }] : []),
+  ];
   const [soundId, setSoundId] = useState<string>(data.plans[0]?.soundId ?? practice[0]!.id);
   const [present, setPresent] = useState(false);
   const [session, setSession] = useState<ExposureSession | null>(null);
@@ -170,7 +180,7 @@ export function Exposure() {
   const plan: ExposurePlan = useMemo(() => data.plans.find((p) => p.soundId === soundId) ?? createPlan(`plan-${soundId}`, soundId), [data.plans, soundId]);
   const now = Date.now();
   const locked = isLocked(plan, now);
-  const synth = practice.find((s) => s.id === soundId)!.synth as Synth;
+  const synth = practice.find((s) => s.id === soundId)?.synth;
 
   // Exposure always runs under the Child Mode policy (mono, lower ceiling); restored on leave.
   useEffect(() => {
@@ -192,7 +202,8 @@ export function Exposure() {
     if (!r.ok) { setMsg(t(`exposure.refused.${r.reason}`)); return; }
     setSession(r.session);
     setMsg('');
-    engine.playExposure(synth, playbackLevelDb(r.session));
+    if (synth) engine.playExposure(synth, playbackLevelDb(r.session));
+    else void loadRecording(OWN_SOUND).then((b) => b && engine.playExposureRecording(b, playbackLevelDb(r.session)));
     repo.audit('exposure.started', { levelDb: r.session.levelDb });
     refresh();
   };
@@ -241,6 +252,26 @@ export function Exposure() {
     return () => window.clearTimeout(id);
   });
 
+  const recordOwn = async () => {
+    if (!repo.canStore) { setMsg(t('routines.needConsent')); return; }
+    engine.stopAll('recording');
+    const ctrl = new AbortController();
+    setRecording(ctrl);
+    setMsg(t('routines.recordingNow'));
+    try {
+      await saveRecording(OWN_SOUND, await record(20_000, ctrl.signal));
+      repo.update('recordings', [...data.recordings.filter((x) => x.routineId !== OWN_SOUND), { routineId: OWN_SOUND, peak: 0, savedAt: Date.now() }]);
+      refresh();
+      setHasOwn(true);
+      setSoundId(OWN_SOUND);
+      setMsg(t('exposure.ownSaved'));
+    } catch {
+      setMsg(t('routines.micError'));
+    } finally {
+      setRecording(null);
+    }
+  };
+
   const check = session ? canStepUp(plan, session, Date.now()) : null;
   const step = Math.round((plan.currentLevelDb - EXPOSURE.startDb) / plan.stepDb) + 1;
 
@@ -259,6 +290,12 @@ export function Exposure() {
         {!session && (
           <>
             <Segmented legend={t('exposure.pick')} options={practice.map((p) => p.id)} value={soundId} onChange={setSoundId} labels={(v) => practice.find((p) => p.id === v)!.label} />
+            <details className="card">
+              <summary>{t('exposure.ownTitle')}</summary>
+              <p className="small">{t('exposure.ownBody')}</p>
+              {canRecord() && !recording && <button className="btn" onClick={() => void recordOwn()}>{hasOwn ? t('exposure.ownReRecord') : t('exposure.ownRecord')}</button>}
+              {recording && <button className="btn danger" onClick={() => recording.abort()}>{t('routines.stopRecording')}</button>}
+            </details>
             <p data-testid="exposure-level">{t('exposure.level', { step: Math.max(1, step), db: plan.currentLevelDb })}</p>
             {locked && <p className="notice" role="alert">{t('exposure.locked')}</p>}
             <label className="check"><input type="checkbox" checked={present} onChange={(e) => setPresent(e.target.checked)} /> {t('exposure.present')}</label>

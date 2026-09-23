@@ -1,15 +1,60 @@
 {
   "common": {
-    "back": "Back", "next": "Next", "continue": "Continue", "save": "Save", "cancel": "Cancel", "close": "Close",
-    "yes": "Yes", "no": "No", "unsure": "Not sure", "minutes": "{n} min", "playExample": "Play example", "stopSound": "Stop sound",
-    "important": "Please read", "notFound": "Not found", "skip": "Skip to content", "volume": "Volume", "quieter": "Quieter",
-    "louder": "Louder", "volumeLevel": "Volume level {n} of 5", "opensNewTab": "(opens in a new tab)"
+    "back": "Back",
+    "next": "Next",
+    "continue": "Continue",
+    "save": "Save",
+    "cancel": "Cancel",
+    "close": "Close",
+    "yes": "Yes",
+    "no": "No",
+    "unsure": "Not sure",
+    "minutes": "{n} min",
+    "playExample": "Play example",
+    "stopSound": "Stop sound",
+    "important": "Please read",
+    "notFound": "Not found",
+    "skip": "Skip to content",
+    "volume": "Volume",
+    "quieter": "Quieter",
+    "louder": "Louder",
+    "volumeLevel": "Volume level {n} of 5",
+    "opensNewTab": "(opens in a new tab)"
   },
-  "nav": { "main": "Main", "today": "Today", "activities": "Activities", "sound": "Sound", "goals": "Goals", "learn": "Learn", "settings": "Settings", "routines": "Routine songs" },
-  "tier": { "Verified": "Verified", "Emerging": "Emerging", "Unverified": "Unverified", "consensus": "clinical consensus" },
-  "age": { "2-4": "2–4 years", "5-7": "5–7 years", "8-12": "8–12 years" },
-  "comm": { "speaking": "Speaks in sentences", "some-words": "Uses some words", "minimally-verbal": "Few or no words yet" },
-  "place": { "home": "Home", "school": "School", "shop": "Shop", "outside": "Outside", "car": "Car", "other": "Other" },
+  "nav": {
+    "main": "Main",
+    "today": "Today",
+    "activities": "Activities",
+    "sound": "Sound",
+    "goals": "Goals",
+    "learn": "Learn",
+    "settings": "Settings",
+    "routines": "Routine songs"
+  },
+  "tier": {
+    "Verified": "Verified",
+    "Emerging": "Emerging",
+    "Unverified": "Unverified",
+    "consensus": "clinical consensus"
+  },
+  "age": {
+    "2-4": "2–4 years",
+    "5-7": "5–7 years",
+    "8-12": "8–12 years"
+  },
+  "comm": {
+    "speaking": "Speaks in sentences",
+    "some-words": "Uses some words",
+    "minimally-verbal": "Few or no words yet"
+  },
+  "place": {
+    "home": "Home",
+    "school": "School",
+    "shop": "Shop",
+    "outside": "Outside",
+    "car": "Car",
+    "other": "Other"
+  },
   "onboarding": {
     "welcomeTitle": "Welcome to HarmonyPath",
     "welcomeBody": "Short, playful music activities and sound tools to use with your child, based on research about music and sound for autistic children.",
@@ -34,126 +79,286 @@
     "agree": "I agree"
   },
   "profile": {
-    "title": "About your child", "minimal": "We only ask what we need to suggest activities.", "nickname": "Nickname (optional)",
-    "age": "Age range", "communication": "How does your child communicate?", "defaultName": "your child"
+    "title": "About your child",
+    "minimal": "We only ask what we need to suggest activities.",
+    "nickname": "Nickname (optional)",
+    "age": "Age range",
+    "communication": "How does your child communicate?",
+    "defaultName": "your child"
   },
   "goals": {
-    "pickTitle": "Choose up to 3 goals", "pickBody": "Goals help us suggest activities and show how things are going. You can skip this and add goals later.",
-    "saveGoals": "Save goals", "later": "Later", "title": "Goals", "none": "You have no goals yet. Add one to start logging.",
-    "logToday": "Today's quick log", "loggedToday": "You already logged today. You can add another if you like.", "quick": "Takes about 30 seconds.",
-    "note": "Note (optional)", "saved": "Saved. Thank you.", "review": "See your review", "add": "Add a goal", "yours": "Your goals",
-    "baseTarget": "Started at: {b}. Aiming for: {t}.", "archive": "Archive"
+    "pickTitle": "Choose up to 3 goals",
+    "pickBody": "Goals help us suggest activities and show how things are going. You can skip this and add goals later.",
+    "saveGoals": "Save goals",
+    "later": "Later",
+    "title": "Goals",
+    "none": "You have no goals yet. Add one to start logging.",
+    "logToday": "Today's quick log",
+    "loggedToday": "You already logged today. You can add another if you like.",
+    "quick": "Takes about 30 seconds.",
+    "note": "Note (optional)",
+    "saved": "Saved. Thank you.",
+    "review": "See your review",
+    "add": "Add a goal",
+    "yours": "Your goals",
+    "baseTarget": "Started at: {b}. Aiming for: {t}.",
+    "archive": "Archive"
   },
   "today": {
-    "title": "Hi {name}! Today's plan", "together": "You played together {n} times this week. Any day you play together counts.",
-    "planTitle": "About {n} minutes of music together", "why": "Why:", "start": "Start session", "childMode": "Child Mode", "coach": "Ask the coach"
+    "title": "Hi {name}! Today's plan",
+    "together": "You played together {n} times this week. Any day you play together counts.",
+    "planTitle": "About {n} minutes of music together",
+    "why": "Why:",
+    "start": "Start session",
+    "childMode": "Child Mode",
+    "coach": "Ask the coach"
   },
   "session": {
-    "title": "Session", "noPlan": "Add your child's details to get a plan.", "step": "Step {i} of {n}", "elapsed": "Time so far",
-    "finish": "Finish", "end": "End session now", "logTitle": "How did it go?", "logBody": "Three quick taps. There are no scores, just what happened.",
-    "together": "Did you play together?", "which": "Which activities did you try?", "engagement": "How involved was your child?",
-    "eng0": "Watched", "eng1": "A little", "eng2": "Some", "eng3": "Lots", "anyDay": "Any day you play together counts."
+    "title": "Session",
+    "noPlan": "Add your child's details to get a plan.",
+    "step": "Step {i} of {n}",
+    "elapsed": "Time so far",
+    "finish": "Finish",
+    "end": "End session now",
+    "logTitle": "How did it go?",
+    "logBody": "Three quick taps. There are no scores, just what happened.",
+    "together": "Did you play together?",
+    "which": "Which activities did you try?",
+    "engagement": "How involved was your child?",
+    "eng0": "Watched",
+    "eng1": "A little",
+    "eng2": "Some",
+    "eng3": "Lots",
+    "anyDay": "Any day you play together counts."
   },
   "activities": {
-    "title": "Activities", "intro": "Short music games grouped by what they practise. Pick any. There is no wrong way to play.",
-    "lowRisk": "low risk", "source": "Source: sub-study {s}", "goal": "Goal", "steps": "How to play", "pause": "Pause and wait:",
-    "tips": "Tips", "why": "Why this helps", "like": "My child likes this", "liked": "Liked ✓"
+    "title": "Activities",
+    "intro": "Short music games grouped by what they practise. Pick any. There is no wrong way to play.",
+    "lowRisk": "low risk",
+    "source": "Source: sub-study {s}",
+    "goal": "Goal",
+    "steps": "How to play",
+    "pause": "Pause and wait:",
+    "tips": "Tips",
+    "why": "Why this helps",
+    "like": "My child likes this",
+    "liked": "Liked ✓"
   },
   "routines": {
     "intro": "Use the same short song every time for a routine. The same song makes the routine predictable.",
-    "tune": "Tune: {tune}", "sameSong": "Same song, every time", "schedule": "Picture steps", "song": "The song", "playTune": "Play the tune",
-    "myVoice": "Sing it in your voice", "myVoiceBody": "Record yourself singing (up to 20 seconds). It stays on this phone and plays at a safe level in Child Mode.",
-    "record": "Record my voice", "reRecord": "Record again", "stopRecording": "Stop recording", "playMine": "Play my recording",
-    "recordingNow": "Recording… sing now.", "saved": "Saved on this phone.", "micError": "We couldn't use the microphone. Check permissions and try again.",
+    "tune": "Tune: {tune}",
+    "sameSong": "Same song, every time",
+    "schedule": "Picture steps",
+    "song": "The song",
+    "playTune": "Play the tune",
+    "myVoice": "Sing it in your voice",
+    "myVoiceBody": "Record yourself singing (up to 20 seconds). It stays on this phone and plays at a safe level in Child Mode.",
+    "record": "Record my voice",
+    "reRecord": "Record again",
+    "stopRecording": "Stop recording",
+    "playMine": "Play my recording",
+    "recordingNow": "Recording… sing now.",
+    "saved": "Saved on this phone.",
+    "micError": "We couldn't use the microphone. Check permissions and try again.",
     "needConsent": "Please give consent in Settings first."
   },
   "sound": {
-    "title": "Sound toolkit", "intro": "Tools to protect your child from sound overload and, gently and only at their pace, build comfort and control.",
-    "diary": "Sound diary", "patterns": "Patterns", "countdown": "Countdown", "tooLoud": "Too-loud card", "exposure": "Gentle sound practice",
-    "strategies": "Strategies that help", "referralTitle": "Worth checking", "diaryCount": "Sound diary entries: {n}"
+    "title": "Sound toolkit",
+    "intro": "Tools to protect your child from sound overload and, gently and only at their pace, build comfort and control.",
+    "diary": "Sound diary",
+    "patterns": "Patterns",
+    "countdown": "Countdown",
+    "tooLoud": "Too-loud card",
+    "exposure": "Gentle sound practice",
+    "strategies": "Strategies that help",
+    "referralTitle": "Worth checking",
+    "diaryCount": "Sound diary entries: {n}"
   },
   "diary": {
     "intro": "Log a sound in under 30 seconds. After 1–2 weeks, patterns show which sounds are hardest.",
-    "what": "What sound?", "where": "Where?", "loud": "How loud was it?", "loud1": "Quiet", "loud2": "Medium", "loud3": "Very loud",
-    "reaction": "How did your child react?", "r0": "Calm", "r1": "Noticed", "r2": "Uneasy", "r3": "Upset", "r4": "Very distressed",
-    "expected": "Did your child know it was coming?", "saved": "Saved. {n} entries so far."
+    "what": "What sound?",
+    "where": "Where?",
+    "loud": "How loud was it?",
+    "loud1": "Quiet",
+    "loud2": "Medium",
+    "loud3": "Very loud",
+    "reaction": "How did your child react?",
+    "r0": "Calm",
+    "r1": "Noticed",
+    "r2": "Uneasy",
+    "r3": "Upset",
+    "r4": "Very distressed",
+    "expected": "Did your child know it was coming?",
+    "saved": "Saved. {n} entries so far."
   },
   "patterns": {
     "needMore": "You have {n} entries. Patterns are clearer after about a week (7 or more).",
-    "sounds": "Sounds", "sound": "Sound", "times": "Times", "hard": "Upset or more", "places": "Places", "place": "Place",
-    "what": "What this shows", "summary": "{hard} of {total} sounds upset your child. {unexpected} of those were unexpected."
+    "sounds": "Sounds",
+    "sound": "Sound",
+    "times": "Times",
+    "hard": "Upset or more",
+    "places": "Places",
+    "place": "Place",
+    "what": "What this shows",
+    "summary": "{hard} of {total} sounds upset your child. {unexpected} of those were unexpected."
   },
-  "countdown": { "body": "A silent countdown before a noisy thing, like the blender or the hand dryer. Your child can press start.", "start": "Start 3-2-1", "now": "Now" },
-  "tooLoud": { "aria": "Too loud signal card", "text": "Too loud. I need a break." },
+  "countdown": {
+    "body": "A silent countdown before a noisy thing, like the blender or the hand dryer. Your child can press start.",
+    "start": "Start 3-2-1",
+    "now": "Now"
+  },
+  "tooLoud": {
+    "aria": "Too loud signal card",
+    "text": "Too loud. I need a break."
+  },
   "exposure": {
     "rules": "How this works",
     "rule1": "Only with a grown-up present, during a favourite activity. Stop any time.",
     "rule2": "It starts very softly. It can go up by one small step ({step} dB) at most, on another day, and only if your child was calm.",
     "rule3": "If your child presses Stop, or you rate them 3 or more, it stops at once and next time starts quieter.",
     "rule4": "Two stops in a row pause practice for 24 hours. Consider talking to your child's OT or audiologist.",
-    "pick": "Practice sound", "level": "Current step: {step} (about {db} dBFS, very soft)",
+    "pick": "Practice sound",
+    "level": "Current step: {step} (about {db} dBFS, very soft)",
     "locked": "Practice is paused for 24 hours after two stops in a row. That's OK. Consider asking your child's OT or audiologist for ideas.",
-    "present": "I'm with my child now, and they are doing something they enjoy.", "play": "Play very softly",
-    "playing": "Playing softly at {db} dBFS. Watch your child.", "checkin": "How is your child right now?",
-    "stayHere": "Finish, same level next time", "stepUp": "Finish, one small step louder next time",
+    "present": "I'm with my child now, and they are doing something they enjoy.",
+    "play": "Play very softly",
+    "playing": "Playing softly at {db} dBFS. Watch your child.",
+    "checkin": "How is your child right now?",
+    "stayHere": "Finish, same level next time",
+    "stepUp": "Finish, one small step louder next time",
     "stopped": "Stopped. Next time will start quieter. You did the right thing.",
     "stoppedDistress": "Stopped because your child was upset. Next time will start quieter.",
-    "done": "Well done. Same level next time.", "doneUp": "Well done. Next time will be one small step louder.",
+    "done": "Well done. Same level next time.",
+    "doneUp": "Well done. Next time will be one small step louder.",
     "refused": {
       "caregiver-not-present": "Please confirm you are with your child.",
       "locked": "Practice is paused for now.",
       "no-consent": "Please give consent in Settings first."
     },
     "why": {
-      "needs-checkin": "Do a check-in first.", "distress": "Only when your child is calm (0 or 1).", "already-stepped": "Only one step per session.",
-      "too-soon": "Only one step up per day.", "at-ceiling": "This is the highest practice level.", "ended": "Session ended."
-    }
+      "needs-checkin": "Do a check-in first.",
+      "distress": "Only when your child is calm (0 or 1).",
+      "already-stepped": "Only one step per session.",
+      "too-soon": "Only one step up per day.",
+      "at-ceiling": "This is the highest practice level.",
+      "ended": "Session ended."
+    },
+    "ownLabel": "Our own recording",
+    "ownTitle": "Use a recording of the real sound",
+    "ownBody": "Record the sound your child finds hard (up to 20 seconds), for example your own blender. It stays on this phone. It will be played at the same very soft practice level, with the same stop rules.",
+    "ownRecord": "Record the sound",
+    "ownReRecord": "Record it again",
+    "ownSaved": "Saved on this phone. 'Our own recording' is now selected."
   },
   "review": {
-    "title": "Your review", "heading": "HarmonyPath review {start} to {end}",
+    "title": "Your review",
+    "heading": "HarmonyPath review {start} to {end}",
     "inWindow": "This covers 8–12 weeks, a good time to review with your child's therapist.",
     "early": "This covers {w} weeks. A full review is most useful after 8–12 weeks.",
-    "edit": "Summary (you can edit this before sharing)", "raw": "Raw counts (always included)",
-    "copy": "Copy text", "print": "Print", "download": "Download", "copied": "Copied.", "copyFailed": "Couldn't copy. Please use Download."
+    "edit": "Summary (you can edit this before sharing)",
+    "raw": "Raw counts (always included)",
+    "copy": "Copy text",
+    "print": "Print",
+    "download": "Download",
+    "copied": "Copied.",
+    "copyFailed": "Couldn't copy. Please use Download."
   },
   "learn": {
-    "title": "Learn", "checker": "Is this therapy proven?", "therapist": "Choosing a music therapist", "about": "About this app",
-    "tiers": "How we rate evidence", "interventions": "Types of music and sound support", "unverified": "Programmes without good evidence",
-    "deliveredBy": "Delivered by: {who}", "notOffered": "This app explains this programme but does not offer it."
+    "title": "Learn",
+    "checker": "Is this therapy proven?",
+    "therapist": "Choosing a music therapist",
+    "about": "About this app",
+    "tiers": "How we rate evidence",
+    "interventions": "Types of music and sound support",
+    "unverified": "Programmes without good evidence",
+    "deliveredBy": "Delivered by: {who}",
+    "notOffered": "This app explains this programme but does not offer it."
   },
   "redflags": {
     "intro": "Answer a few questions about a programme you've heard of. We'll compare it with the warning signs in the research.",
-    "check": "Check", "counts": "Red flags: {flags}. Not sure: {unsure}.",
-    "level": { "none": "No red flags found", "caution": "Be cautious", "unverified": "Treat as Unverified" }
+    "check": "Check",
+    "counts": "Red flags: {flags}. Not sure: {unsure}.",
+    "level": {
+      "none": "No red flags found",
+      "caution": "Be cautious",
+      "unverified": "Treat as Unverified"
+    }
   },
-  "therapist": { "questions": "Five questions to ask", "bodies": "Check credentials", "noRankings": "Official registers only. We do not rank or recommend individual therapists." },
+  "therapist": {
+    "questions": "Five questions to ask",
+    "bodies": "Check credentials",
+    "noRankings": "Official registers only. We do not rank or recommend individual therapists."
+  },
   "coach": {
-    "title": "Ask the coach", "disclosure": "I'm an AI helper, not a clinician. I answer only from the app's approved guidance and show my sources. For medical questions, please ask your child's doctor.",
-    "you": "You", "ai": "Coach", "sources": "Sources", "ask": "Your question", "send": "Ask",
-    "offline": "Works offline. Your questions are not stored or sent anywhere."
+    "title": "Ask the coach",
+    "disclosure": "I'm an AI helper, not a clinician. I answer only from the app's approved guidance and show my sources. For medical questions, please ask your child's doctor.",
+    "you": "You",
+    "ai": "Coach",
+    "sources": "Sources",
+    "ask": "Your question",
+    "send": "Ask",
+    "offline": "Works offline. Your questions are not stored or sent anywhere.",
+    "emergency": "If anyone is in danger or hurt right now, call {number}."
   },
   "settings": {
-    "title": "Settings", "privacy": "Privacy and data",
-    "consent": { "none": "Consent: not given. Nothing about your child is stored.", "granted": "Consent: given. Data is stored on this device only.", "withdrawn": "Consent: withdrawn. Nothing new is being stored." },
+    "title": "Settings",
+    "privacy": "Privacy and data",
+    "consent": {
+      "none": "Consent: not given. Nothing about your child is stored.",
+      "granted": "Consent: given. Data is stored on this device only.",
+      "withdrawn": "Consent: withdrawn. Nothing new is being stored."
+    },
     "localOnly": "Everything stays on this device. There are no ads, trackers or analytics.",
     "retention": "Logs are deleted after 12 months, and the sound diary after 90 days.",
-    "audit": "Privacy log: {n} entries ({ok}). It contains no personal details.", "auditOk": "intact", "auditBad": "check failed",
-    "export": "Download my data", "exported": "Your data file is downloading.", "withdraw": "Withdraw consent", "withdrawn": "Consent withdrawn. Nothing new will be stored.",
-    "deleteAll": "Delete all data", "confirmDelete": "Delete everything on this device? This cannot be undone.",
-    "access": "Accessibility", "reducedMotion": "Reduce motion (recommended)", "dyslexia": "Dyslexia-friendly font", "textSize": "Text size",
-    "audio": "Sound", "parentVolume": "Volume in Parent Mode", "headphones": "Child Mode has its own lower volume limit. Use headphones made for children that limit volume to 85 dB or less.",
-    "region": "Region", "regionLegend": "Where are you? (for help-line numbers)",
-    "coach": "Coach", "coachOffline": "The coach works offline, from approved guidance only. An optional AI-writing mode may come later; it will be off unless you switch it on."
+    "audit": "Privacy log: {n} entries ({ok}). It contains no personal details.",
+    "auditOk": "intact",
+    "auditBad": "check failed",
+    "export": "Download my data",
+    "exported": "Your data file is downloading.",
+    "withdraw": "Withdraw consent",
+    "withdrawn": "Consent withdrawn. Nothing new will be stored.",
+    "deleteAll": "Delete all data",
+    "confirmDelete": "Delete everything on this device? This cannot be undone.",
+    "access": "Accessibility",
+    "reducedMotion": "Reduce motion (recommended)",
+    "dyslexia": "Dyslexia-friendly font",
+    "textSize": "Text size",
+    "audio": "Sound",
+    "parentVolume": "Volume in Parent Mode",
+    "headphones": "Child Mode has its own lower volume limit. Use headphones made for children that limit volume to 85 dB or less.",
+    "region": "Region",
+    "regionLegend": "Where are you? (for help-line numbers)",
+    "coach": "Coach",
+    "coachOffline": "The coach works offline, from approved guidance only. An optional AI-writing mode may come later; it will be off unless you switch it on."
   },
   "gate": {
-    "title": "For grown-ups", "explain": "Please answer this question to continue.", "check": "Check",
-    "wrong": "Not quite. Here is a new question.", "locked": "Too many tries. Please wait one minute."
+    "title": "For grown-ups",
+    "explain": "Please answer this question to continue.",
+    "check": "Check",
+    "wrong": "Not quite. Here is a new question.",
+    "locked": "Too many tries. Please wait one minute."
   },
   "child": {
-    "stop": "Stop – too loud", "stopAria": "Stop all sound", "playsSound": "plays a sound", "grownups": "Grown-ups: press and hold to leave Child Mode",
-    "grownupsShort": "Grown-ups", "home": "Child Mode home", "backHome": "Home", "quiet": "Quiet now", "quietBody": "All sound is off. You did the right thing.",
-    "drum": "Drum", "shaker": "Shaker", "bells": "Bells", "songs": "Songs", "calm": "Calm", "day": "My day", "countdown": "3-2-1",
-    "tooLoud": "Too loud", "tapToPlay": "Tap to play the {what}", "play": "Play", "sing": "Sing"
+    "stop": "Stop – too loud",
+    "stopAria": "Stop all sound",
+    "playsSound": "plays a sound",
+    "grownups": "Grown-ups: press and hold to leave Child Mode",
+    "grownupsShort": "Grown-ups",
+    "home": "Child Mode home",
+    "backHome": "Home",
+    "quiet": "Quiet now",
+    "quietBody": "All sound is off. You did the right thing.",
+    "drum": "Drum",
+    "shaker": "Shaker",
+    "bells": "Bells",
+    "songs": "Songs",
+    "calm": "Calm",
+    "day": "My day",
+    "countdown": "3-2-1",
+    "tooLoud": "Too loud",
+    "tapToPlay": "Tap to play the {what}",
+    "play": "Play",
+    "sing": "Sing"
   },
   "childNotice": {
     "title": "Before Child Mode",

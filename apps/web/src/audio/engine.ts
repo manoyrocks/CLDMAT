@@ -3,7 +3,7 @@
 // REQ-SAF-07 (slew limit), REQ-M3-03 (normalised recordings), REQ-NFR-06 (low-latency drum).
 // Every number comes from @harmony/core; nothing here decides a loudness on its own.
 import {
-  EXPOSURE, clampDb, clipperCurve, dbToLinear, fadeInMs, normalisationGain, policyFor, rampDurationMs,
+  EXPOSURE, clampDb, clipperCurve, softLimitCurve, dbToLinear, fadeInMs, normalisationGain, policyFor, rampDurationMs,
   type AudioMode, type AudioPolicy,
 } from '@harmony/core';
 import type { AudioExample } from '@harmony/content';
@@ -11,7 +11,8 @@ import type { AudioExample } from '@harmony/content';
 export interface SafetyChain {
   input: GainNode;
   session: GainNode;
-  compressor: DynamicsCompressorNode;
+  /** L3 soft-knee limiter (static WaveShaper curve; no make-up gain, see DEF-009). */
+  limiter: WaveShaperNode;
   clipper: WaveShaperNode;
 }
 
@@ -20,20 +21,16 @@ export function buildSafetyChain(ctx: BaseAudioContext, policy: AudioPolicy): Sa
   const input = ctx.createGain();
   const session = ctx.createGain();
   session.gain.value = 0;
-  const compressor = ctx.createDynamicsCompressor();
+  const limiter = ctx.createWaveShaper();
   const clipper = ctx.createWaveShaper();
-  configureChain({ input, session, compressor, clipper }, policy);
-  input.connect(session).connect(compressor).connect(clipper).connect(ctx.destination);
-  return { input, session, compressor, clipper };
+  configureChain({ input, session, limiter, clipper }, policy);
+  input.connect(session).connect(limiter).connect(clipper).connect(ctx.destination);
+  return { input, session, limiter, clipper };
 }
 
 function configureChain(chain: SafetyChain, policy: AudioPolicy): void {
-  const c = chain.compressor;
-  c.threshold.value = policy.ceilingDb - 3;
-  c.ratio.value = 20;
-  c.knee.value = 0;
-  c.attack.value = 0.001;
-  c.release.value = 0.1;
+  chain.limiter.curve = softLimitCurve(policy.ceilingDb) as Float32Array<ArrayBuffer>;
+  chain.limiter.oversample = '4x'; // reduces aliasing from the knee
   chain.clipper.curve = clipperCurve(policy.ceilingDb) as Float32Array<ArrayBuffer>;
   chain.clipper.oversample = 'none';
   // Child Mode: mono downmix, so no per-ear differences are possible (ADR-0002).
@@ -45,6 +42,21 @@ function configureChain(chain: SafetyChain, policy: AudioPolicy): void {
 /** Caps a level at the mode ceiling without raising it; non-finite input fails quiet (silence). */
 function capDb(db: number, policy: AudioPolicy): number {
   return Number.isFinite(db) ? Math.min(policy.ceilingDb, db) : -Infinity;
+}
+
+/** Mono mixdown of a decoded buffer, peak-normalised to targetDb (layer L1). Silence stays silent. */
+export function normalisedMono(ctx: BaseAudioContext, src: AudioBuffer, targetDb: number): AudioBuffer {
+  const out = ctx.createBuffer(1, src.length, src.sampleRate);
+  const d = out.getChannelData(0);
+  for (let c = 0; c < src.numberOfChannels; c++) {
+    const ch = src.getChannelData(c);
+    for (let i = 0; i < ch.length; i++) d[i] = d[i]! + ch[i]! / src.numberOfChannels;
+  }
+  let peak = 0;
+  for (let i = 0; i < d.length; i++) peak = Math.max(peak, Math.abs(d[i]!));
+  const g = normalisationGain(peak, targetDb);
+  for (let i = 0; i < d.length; i++) d[i] = d[i]! * g;
+  return out;
 }
 
 const midiToHz = (m: number) => 440 * Math.pow(2, (m - 69) / 12); // A4 = 440 Hz, fixed
@@ -79,6 +91,21 @@ export class AudioEngine {
   subscribe(fn: Listener): () => void { this.listeners.add(fn); return () => this.listeners.delete(fn); }
   private emit(): void { this.listeners.forEach((l) => l()); }
 
+  private meter: AnalyserNode | null = null;
+  private meterBuf: Float32Array<ArrayBuffer> | null = null;
+  /** Incremented by stopAll(), so an async start (e.g. decoding a recording) cannot begin after a Stop. */
+  private startToken = 0;
+
+  /** Peak absolute sample of the last ~40 ms of real output, after all safety layers (0–1). */
+  outputPeak(): number {
+    if (!this.meter) return 0;
+    this.meterBuf ??= new Float32Array(this.meter.fftSize);
+    this.meter.getFloatTimeDomainData(this.meterBuf);
+    let peak = 0;
+    for (const v of this.meterBuf) peak = Math.max(peak, Math.abs(v));
+    return peak;
+  }
+
   /** Current session gain value (for tests and the level meter). */
   gainValue(): number { return this.chain ? this.chain.session.gain.value : 0; }
 
@@ -88,6 +115,10 @@ export class AudioEngine {
       const Ctor = window.AudioContext ?? (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       this.ctx = new Ctor({ latencyHint: 'interactive' });
       this.chain = buildSafetyChain(this.ctx, this.policy);
+      // Output meter tapped AFTER the final clipper: measures what actually reaches the speakers.
+      this.meter = this.ctx.createAnalyser();
+      this.meter.fftSize = 2048;
+      this.chain.clipper.connect(this.meter);
     }
     if (this.ctx.state === 'suspended') void this.ctx.resume();
     return { ctx: this.ctx, chain: this.chain! };
@@ -264,11 +295,29 @@ export class AudioEngine {
    */
   playExposure(kind: 'hum' | 'whirr' | 'beep' | 'bell', levelDb: number, maxMs: number = EXPOSURE.maxSessionMs): void {
     const { ctx, chain } = this.ensure();
+    this.startExposure(ctx, chain, this.noiseBuffer(ctx, kind), levelDb, maxMs);
+  }
+
+  /**
+   * Graded exposure with the family's own recording of the difficult sound (sub-study §6.2, C-026; limitation L-03).
+   * The recording is mixed to mono and peak-normalised to -1 dBFS, exactly like the built-in sounds, so the plan
+   * level means the same thing whichever sound is used. Returns false if a Stop happened while decoding.
+   */
+  async playExposureRecording(blob: Blob, levelDb: number, maxMs: number = EXPOSURE.maxSessionMs): Promise<boolean> {
+    const { ctx, chain } = this.ensure();
+    const token = this.startToken;
+    const decoded = await ctx.decodeAudioData(await blob.arrayBuffer());
+    if (token !== this.startToken) return false;
+    this.startExposure(ctx, chain, normalisedMono(ctx, decoded, -1), levelDb, maxMs);
+    return true;
+  }
+
+  private startExposure(ctx: AudioContext, chain: SafetyChain, buffer: AudioBuffer, levelDb: number, maxMs: number): void {
     const level = Math.max(EXPOSURE.minLevelDb, capDb(Math.min(EXPOSURE.ceilingDb, levelDb), this.policy));
     this.beginSound(ctx, chain, level);
     this.exposureLevelDb = level;
     const src = ctx.createBufferSource();
-    src.buffer = this.noiseBuffer(ctx, kind);
+    src.buffer = buffer;
     src.loop = true;
     src.connect(chain.input);
     const at = ctx.currentTime + 0.02;
@@ -280,7 +329,9 @@ export class AudioEngine {
   /** Plays a caregiver recording through the chain, normalised to -6 dBFS peak (REQ-M3-03). */
   async playRecording(blob: Blob): Promise<void> {
     const { ctx, chain } = this.ensure();
+    const token = this.startToken;
     const buf = await ctx.decodeAudioData(await blob.arrayBuffer());
+    if (token !== this.startToken) return;
     let peak = 0;
     for (let c = 0; c < buf.numberOfChannels; c++) for (const v of buf.getChannelData(c)) peak = Math.max(peak, Math.abs(v));
     const src = ctx.createBufferSource();
@@ -300,6 +351,7 @@ export class AudioEngine {
     this.lastStop = { requestedAt, source, rampMs: this.policy.stopRampMs };
     this.stopped = true;
     this.exposureLevelDb = null;
+    this.startToken++;
     if (this.ctx && this.chain) {
       const g = this.chain.session.gain;
       const t = this.ctx.currentTime;

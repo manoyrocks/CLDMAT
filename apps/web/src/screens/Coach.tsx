@@ -2,7 +2,7 @@
 // and needs the backend proxy (ADR-0005), which the MVP does not ship.
 import { useEffect, useRef, useState } from 'react';
 import { askOffline, type CoachReply } from '@harmony/ai';
-import { passageById } from '@harmony/content';
+import { crisisLinesFor, passageById } from '@harmony/content';
 import { Screen } from '../components/ui';
 import { t } from '../lib/i18n';
 import { useStore } from '../lib/store';
@@ -30,6 +30,8 @@ export function Coach() {
   return (
     <Screen title={t('coach.title')}>
       <p className="notice">{t('coach.disclosure')}</p>
+      {/* Always visible, independent of the classifier: a crisis the lexicon misses still sees where to get help (DEF-010). */}
+      <p className="small" data-testid="emergency-line"><strong>{t('coach.emergency', { number: crisisLinesFor(data.settings.region).emergency })}</strong></p>
       <div className="chat" aria-live="polite">
         {turns.map((turn, i) => (
           <div key={i} className="stack">

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  CHILD_POLICY, PARENT_POLICY, STOP_BUDGET_MS, clampDb, clipperCurve, dbToLinear, fadeInMs,
+  CHILD_POLICY, PARENT_POLICY, STOP_BUDGET_MS, clampDb, clipperCurve, softLimitCurve, dbToLinear, fadeInMs,
   levelDots, linearToDb, normalisationGain, policyFor, rampDurationMs, safeGain, stepVolume,
 } from './policy';
 
@@ -92,5 +92,22 @@ describe('audio policy', () => {
     expect(Math.min(...curve)).toBeCloseTo(-c, 6);
     expect(curve[50]).toBeCloseTo(0, 6);
     expect(clipperCurve(-6).length).toBe(2049);
+  });
+
+  it('REQ-SAF-01 soft limiter is unity gain below the knee (no make-up gain, DEF-009) and never exceeds the ceiling', () => {
+    const n = 4097;
+    const curve = softLimitCurve(-12, 3, n);
+    const at = (x: number) => curve[Math.round(((x + 1) / 2) * (n - 1))]!;
+    const c = dbToLinear(-12);
+    // Quiet signals pass unchanged: -45 dBFS stays -45 dBFS (to curve resolution).
+    for (const db of [-60, -45, -26, -16]) {
+      const x = dbToLinear(db);
+      expect(Math.abs(at(x) - x)).toBeLessThan(0.0006);
+    }
+    expect(Math.max(...curve)).toBeLessThanOrEqual(c);
+    expect(Math.min(...curve)).toBeGreaterThanOrEqual(-c);
+    expect(at(1)).toBeGreaterThan(c * 0.98); // saturates towards the ceiling
+    for (let i = 1; i < n; i++) expect(curve[i]!).toBeGreaterThanOrEqual(curve[i - 1]!); // monotonic
+    expect(softLimitCurve(-6, 0).length).toBe(4097); // knee is floored at 0.1 dB
   });
 });

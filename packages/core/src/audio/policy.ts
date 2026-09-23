@@ -107,6 +107,25 @@ export function normalisationGain(peakLinear: number, targetDb = -6): number {
   return dbToLinear(targetDb) / peakLinear;
 }
 
+/**
+ * Soft-knee limiter transfer curve (layer L3). Linear (unity gain) up to `kneeDb` below the ceiling, then a
+ * smooth tanh approach that never reaches above the ceiling. A static curve has no make-up gain, unlike the
+ * Web Audio DynamicsCompressorNode it replaces (defect DEF-009: the compressor's automatic make-up gain made
+ * every quiet level about 8.5 dB louder than planned).
+ */
+export function softLimitCurve(ceilingDb: number, kneeDb = 3, samples = 4097): Float32Array {
+  const c = dbToLinear(ceilingDb);
+  const k = dbToLinear(ceilingDb - Math.max(0.1, kneeDb));
+  const curve = new Float32Array(samples);
+  for (let i = 0; i < samples; i++) {
+    const x = (i * 2) / (samples - 1) - 1;
+    const ax = Math.abs(x);
+    const y = ax <= k ? ax : k + (c - k) * Math.tanh((ax - k) / (c - k));
+    curve[i] = Math.sign(x) * y;
+  }
+  return curve;
+}
+
 /** Hard-clipper transfer curve used by the final WaveShaper stage (layer L4). */
 export function clipperCurve(ceilingDb: number, samples = 2049): Float32Array {
   const c = dbToLinear(ceilingDb);

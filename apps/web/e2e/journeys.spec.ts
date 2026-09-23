@@ -128,6 +128,7 @@ test.describe('parent journeys', () => {
   test('REQ-AI-02 REQ-AI-03 REQ-AI-04 REQ-AI-05 coach: grounded answer, refusal, escalation, injection', async ({ page }) => {
     await onboard(page);
     await page.goto('./#/coach');
+    await expect(page.getByTestId('emergency-line')).toContainText('995');
     const ask = async (q: string) => { await page.getByLabel('Your question').fill(q); await page.getByRole('button', { name: 'Ask', exact: true }).click(); };
     await ask('How do I do a drum conversation?');
     await expect(page.locator('[data-kind="answer"]').last()).toContainText('[K-08]');

@@ -29,7 +29,26 @@ function idfOf(t: string): number {
   return Math.log(1 + (INDEX.n - df + 0.5) / (df + 0.5));
 }
 
+/**
+ * Query expansion (retrieval only; never changes answer text):
+ * - a small Filipino/Taglish lexicon for the Philippine launch region;
+ * - everyday noise sources map to the generic sound-sensitivity vocabulary the passages use.
+ */
+const LEXICON: Readonly<Record<string, string>> = {
+  tunog: 'sound', ingay: 'noise loud', takot: 'scared fear', natatakot: 'scared fear', anak: 'child', kanta: 'song sing',
+  musika: 'music', bahay: 'home', tulog: 'sleep bedtime', iyak: 'upset', magwala: 'meltdown upset', laro: 'play',
+};
+const NOISE_SOURCES = /\b(dryers?|blenders?|vacuums?|vaccum|clippers?|drill\w*|renovation|fireworks?|balloons?|popping|sirens?|alarms?|announcements?|beep\w*|horns?|aircon|traffic|trolleys?|crowds?|crowded|mrt|toilets?|flush\w*|band|party|parties|wedding|supermarket|mall|shopping|scraping)\b/;
+
+export function expandQuery(query: string): string {
+  const lower = query.toLowerCase();
+  const extra = lower.split(/[^a-z-]+/).map((w) => LEXICON[w]).filter(Boolean);
+  if (NOISE_SOURCES.test(lower)) extra.push('sound noise loud sensitive');
+  return extra.length ? `${query} ${extra.join(' ')}` : query;
+}
+
 export function retrieve(query: string, limit = 3): Hit[] {
+  query = expandQuery(query);
   const q = [...new Set(tokenize(query))];
   const lower = query.toLowerCase();
   // Terms unknown to the corpus get the maximum IDF, so off-topic words weigh heavily against coverage.
