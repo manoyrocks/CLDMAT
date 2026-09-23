@@ -1,0 +1,61 @@
+{
+  "version": "1.0.0",
+  "updated": "2026-09-23",
+  "conventions": {
+    "tier": "Tier of the practice or intervention the claim is about: Verified = recommended add-on / clinical consensus in the sub-study; Emerging = promising but limited or low-quality evidence, low risk; Unverified = no convincing controlled-trial support. A claim that says an Unverified therapy lacks evidence is itself accurate, but carries the tier of the therapy it describes.",
+    "source": "Sub-study section plus the primary citation named in it. Evaluators must check primary full texts before public launch (see evidence/open_questions.md)."
+  },
+  "claims": [
+    { "id": "C-001", "text": "Music therapy from a credentialed music therapist probably helps overall functioning in the short term.", "tier": "Verified", "sections": ["§3", "§8"], "sources": ["Geretsegger et al., Cochrane Review, 2022"], "notes": "Moderate certainty; add-on only." },
+    { "id": "C-002", "text": "Music therapy does not reliably reduce core autism features on its own.", "tier": "Verified", "sections": ["§3", "§3.1", "§8"], "sources": ["Bieleninik et al. (TIME-A), JAMA, 2017"] },
+    { "id": "C-003", "text": "Music therapy is low risk: trials report no increase in adverse effects when sound levels respect the child's sensitivities.", "tier": "Verified", "sections": ["§3", "§3.1"], "sources": ["Geretsegger et al., Cochrane Review, 2022"] },
+    { "id": "C-004", "text": "Music activities are an add-on to core support such as speech therapy and developmental intervention, not a replacement.", "tier": "Verified", "sections": ["§3.1", "§8"], "sources": ["Sub-study conclusion"] },
+    { "id": "C-005", "text": "Family-centred music therapy, where parents learn musical play for daily routines, has shown gains in social engagement at home.", "tier": "Emerging", "sections": ["§2", "§3"], "sources": ["Thompson et al., 2014"] },
+    { "id": "C-006", "text": "In one trial, music therapy was linked with better parent-rated communication and family quality of life.", "tier": "Emerging", "sections": ["§3"], "sources": ["Sharda et al., Translational Psychiatry, 2018"] },
+    { "id": "C-007", "text": "Many autistic children perceive pitch as well as or better than their peers.", "tier": "Emerging", "sections": ["§1"], "sources": ["Heaton, Phil. Trans. R. Soc. B, 2009"] },
+    { "id": "C-008", "text": "Autistic children can usually recognise happy, sad or scary music as accurately as their peers.", "tier": "Emerging", "sections": ["§1"], "sources": ["Sub-study §1"] },
+    { "id": "C-009", "text": "The repetition and clear structure of songs can make an activity feel predictable, which may lower anxiety.", "tier": "Emerging", "sections": ["§1", "§4"], "sources": ["Sub-study §4 (hypothesis with partial support)"] },
+    { "id": "C-010", "text": "Pausing before the last word of a familiar song gives your child a chance to look, make a sound or say the word.", "tier": "Emerging", "sections": ["§7.1"], "sources": ["Sub-study §7.1"] },
+    { "id": "C-011", "text": "The benefit comes from making music together. Screens and background music are not therapy.", "tier": "Emerging", "sections": ["§7.2"], "sources": ["Sub-study §7.2"] },
+    { "id": "C-012", "text": "Ten to fifteen minutes a day of playful, shared music-making is a realistic and worthwhile goal.", "tier": "Emerging", "sections": ["§7"], "sources": ["Sub-study §7"] },
+    { "id": "C-013", "text": "Singing words while tapping a drum (auditory-motor mapping) is a promising approach for some minimally verbal children, based on small studies.", "tier": "Emerging", "sections": ["§2", "§3", "§4"], "sources": ["Wan et al., PLoS ONE, 2011"] },
+    { "id": "C-014", "text": "Rhythm links sound and movement and may support coordination.", "tier": "Emerging", "sections": ["§4", "§7.1"], "sources": ["Sub-study §4; Sharda et al., 2018"] },
+    { "id": "C-015", "text": "Using the same short song for each routine makes the routine more predictable.", "tier": "Emerging", "sections": ["§7.1"], "sources": ["Sub-study §7.1"] },
+    { "id": "C-016", "text": "Slow, quiet, familiar music during calm-down time, chosen by your child, can help with regulation.", "tier": "Emerging", "sections": ["§7.1", "§6.2"], "sources": ["Sub-study §7.1, §6.2"] },
+    { "id": "C-017", "text": "Picture cards for song choices help children who are not yet speaking to take part.", "tier": "Emerging", "sections": ["§7.2"], "sources": ["Sub-study §7.2"] },
+    { "id": "C-018", "text": "Follow your child's preferences and celebrate participation, not performance.", "tier": "Emerging", "sections": ["§7.2"], "sources": ["Sub-study §7.2"] },
+    { "id": "C-019", "text": "Many autistic children find some everyday sounds distressing or painful.", "tier": "Emerging", "sections": ["§1", "§6"], "sources": ["Sub-study §6 (\"roughly half or more\"; prevalence estimate not independently checked)"] },
+    { "id": "C-020", "text": "A hearing test by an audiologist experienced with autistic children can rule out hearing loss or ear problems.", "tier": "Verified", "sections": ["§6.1"], "sources": ["Sub-study §6.1 (clinical consensus)"] },
+    { "id": "C-021", "text": "Keeping a sound diary for 1–2 weeks helps you spot patterns in which sounds are hard.", "tier": "Verified", "sections": ["§6.1"], "sources": ["Sub-study §6.1 (clinical consensus)"] },
+    { "id": "C-022", "text": "An occupational therapist can assess your child's wider sensory profile.", "tier": "Verified", "sections": ["§6.1"], "sources": ["Sub-study §6.1 (clinical consensus)"] },
+    { "id": "C-023", "text": "Ear defenders or noise-cancelling headphones help in planned loud settings. Using them all day may increase sensitivity over time, so use them for specific situations.", "tier": "Verified", "sections": ["§6.2"], "sources": ["Sub-study §6.2 (clinical consensus; the all-day caution is precautionary)"] },
+    { "id": "C-024", "text": "Unpredictable sounds are usually the hardest. A warning and a countdown make a sound more predictable.", "tier": "Verified", "sections": ["§6.2"], "sources": ["Sub-study §6.2 (clinical consensus)"] },
+    { "id": "C-025", "text": "Giving your child control and choice, a quiet place to retreat, and a \"too loud\" signal helps them cope.", "tier": "Verified", "sections": ["§6.2"], "sources": ["Sub-study §6.2 (clinical consensus)"] },
+    { "id": "C-026", "text": "Graded exposure means playing a difficult sound very softly during a favourite activity and raising the volume in small steps over weeks, always within your child's comfort. Stop if distress rises.", "tier": "Verified", "sections": ["§6.2"], "sources": ["Sub-study §6.2 (clinical consensus)"] },
+    { "id": "C-027", "text": "Familiar music or white noise at a moderate volume can mask background noise at bedtime or during homework.", "tier": "Verified", "sections": ["§6.2"], "sources": ["Sub-study §6.2 (clinical consensus)"] },
+    { "id": "C-028", "text": "Social stories and visual explanations help explain what a sound is and why it happens.", "tier": "Verified", "sections": ["§6.2"], "sources": ["Sub-study §6.2 (clinical consensus)"] },
+    { "id": "C-029", "text": "Making a loud sound yourself on a drum, with full control, is often less threatening than hearing it unexpectedly.", "tier": "Emerging", "sections": ["§6.2"], "sources": ["Sub-study §6.2"] },
+    { "id": "C-030", "text": "For older children whose fear of sounds causes avoidance, CBT-based approaches from a trained therapist may help.", "tier": "Verified", "sections": ["§6.2"], "sources": ["Sub-study §6.2 (clinical consensus)"] },
+    { "id": "C-031", "text": "Safe listening guidance is about 85 dB at most, and lower for young children.", "tier": "Verified", "sections": ["§5"], "sources": ["Sub-study §5; WHO safe-listening guidance (to be checked by audiologist)"] },
+    { "id": "C-032", "text": "Auditory Integration Training (Berard) has not been shown to work in controlled trials, and major professional bodies do not support it.", "tier": "Unverified", "sections": ["§5"], "sources": ["Sinha et al., Cochrane Review, 2011"] },
+    { "id": "C-033", "text": "In a small placebo-controlled trial, the Tomatis method did no better than placebo.", "tier": "Unverified", "sections": ["§5"], "sources": ["Corbett et al., 2008"] },
+    { "id": "C-034", "text": "The Safe and Sound Protocol has no controlled trials in autism, and the theory behind it is contested.", "tier": "Unverified", "sections": ["§2", "§5"], "sources": ["Sub-study §5"] },
+    { "id": "C-035", "text": "Samonas, Therapeutic Listening and iLs have no robust controlled trials in autism.", "tier": "Unverified", "sections": ["§5"], "sources": ["Sub-study §5"] },
+    { "id": "C-036", "text": "Binaural beats and \"432 Hz\" or \"Solfeggio\" frequency music have no scientific basis as an autism therapy. They are harmless as relaxing music if your child enjoys it.", "tier": "Unverified", "sections": ["§5"], "sources": ["Sub-study §5"] },
+    { "id": "C-037", "text": "Sound baths and singing bowls have no evidence as therapy. Some children find them relaxing; others find them overwhelming.", "tier": "Unverified", "sections": ["§5"], "sources": ["Sub-study §5"] },
+    { "id": "C-038", "text": "If you try an unproven programme, set a fixed trial period, agree measurable goals first, and stop if there is no clear change.", "tier": "Verified", "sections": ["§5"], "sources": ["Sub-study §5 practical guidance"] },
+    { "id": "C-039", "text": "A credentialed music therapist (for example MT-BC or HCPC-registered) should set written goals, measure progress and coordinate with your child's other professionals.", "tier": "Verified", "sections": ["§2", "§7.3"], "sources": ["Sub-study §7.3"] },
+    { "id": "C-040", "text": "Be cautious of anyone who promises to cure autism with music, sells expensive listening equipment, or discourages other therapies.", "tier": "Verified", "sections": ["§7.3"], "sources": ["Sub-study §7.3"] },
+    { "id": "C-041", "text": "A typical music therapy course is 30–45 minute sessions once or twice a week for 8–20 weeks.", "tier": "Verified", "sections": ["§2"], "sources": ["Sub-study §2"] },
+    { "id": "C-042", "text": "Neurologic Music Therapy techniques have limited evidence in autism so far.", "tier": "Emerging", "sections": ["§2", "§8"], "sources": ["Sub-study §2"] },
+    { "id": "D-001", "text": "This app supports, and does not replace, professional assessment and therapy. Music activities may help engagement and wellbeing. They do not cure autism. Stop any activity that causes distress, and talk to your child's clinicians about concerns.", "tier": "Verified", "sections": ["§8"], "sources": ["Team prompt §11 (mandatory disclaimer)"], "approvedNegation": true }
+  ],
+  "bannedClaims": {
+    "terms": ["cure", "cures", "cured", "curing", "heal", "heals", "healed", "healing", "rewire", "rewires", "rewired", "rewiring", "recover", "recovers", "recovered", "recovery", "reverse autism", "reverses autism", "normalise", "normalize", "retrain the brain", "retrains the brain", "retrain hearing", "proven to", "guaranteed", "clinically proven", "miracle", "detox"],
+    "rules": [
+      "Approved content may contain a banned term only inside an approved negation (claim marked approvedNegation, or an item with an Evaluator-recorded negation approval).",
+      "AI-generated text may never contain a banned term. Questions about a cure are answered with the approved refusal template, which quotes D-001.",
+      "No content may say or imply that the app or music reduces core autism severity (C-002)."
+    ]
+  }
+}
