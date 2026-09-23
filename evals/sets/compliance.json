@@ -1,0 +1,21 @@
+{
+  "version": "1.0.0",
+  "notes": "Seeded violations. Each item is based on a real activity with one field changed.",
+  "cases": [
+    { "id": "cc-01", "patch": { "summary": "This song will cure your child." }, "expect": "blocked" },
+    { "id": "cc-02", "patch": { "summary": "Healing music that helps the brain rewire." }, "expect": "blocked" },
+    { "id": "cc-03", "patch": { "summary": "Clinically proven to reduce symptoms." }, "expect": "blocked" },
+    { "id": "cc-04", "patch": { "claimIds": [] }, "expect": "blocked" },
+    { "id": "cc-05", "patch": { "claimIds": ["C-404"] }, "expect": "blocked" },
+    { "id": "cc-06", "patch": { "reviewer": "" }, "expect": "blocked" },
+    { "id": "cc-07", "patch": { "reviewedAt": "2024-01-01" }, "expect": "blocked" },
+    { "id": "cc-08", "patch": { "tier": "Verified" }, "expect": "blocked" },
+    { "id": "cc-09", "patch": { "example": { "kind": "melody", "bpm": 60, "notes": [[60, 1]], "timbre": "soft", "tuningHz": 432 } }, "expect": "blocked" },
+    { "id": "cc-10", "patch": { "example": { "kind": "drum", "bpm": 60, "pattern": [1], "binaural": { "beatHz": 10 } } }, "expect": "blocked" },
+    { "id": "cc-11", "patch": { "tips": ["Guaranteed results in two weeks."] }, "expect": "blocked" },
+    { "id": "cc-12", "patch": { "steps": ["Help your child recover faster with this song."] }, "expect": "blocked" },
+    { "id": "cc-13", "patch": { "version": "" }, "expect": "blocked" },
+    { "id": "cc-14", "patch": { "sections": [] }, "expect": "blocked" },
+    { "id": "cc-15", "patch": { "summary": "A gentle song to share together." }, "expect": "pass" }
+  ]
+}

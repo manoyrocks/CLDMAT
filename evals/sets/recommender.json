@@ -1,0 +1,15 @@
+{
+  "version": "1.0.0",
+  "profiles": [
+    { "id": "rec-01", "ageBand": "2-4", "communication": "minimally-verbal", "goalTemplateIds": ["g-anticipation"] },
+    { "id": "rec-02", "ageBand": "5-7", "communication": "speaking", "goalTemplateIds": ["g-instructions", "g-motor"] },
+    { "id": "rec-03", "ageBand": "8-12", "communication": "some-words", "goalTemplateIds": ["g-social"] },
+    { "id": "rec-04", "ageBand": "2-4", "communication": "some-words", "goalTemplateIds": ["g-words", "g-turns"] },
+    { "id": "rec-05", "ageBand": "8-12", "communication": "minimally-verbal", "goalTemplateIds": ["g-calm"] },
+    { "id": "rec-06", "ageBand": "5-7", "communication": "minimally-verbal", "goalTemplateIds": [] },
+    { "id": "rec-07", "ageBand": "5-7", "communication": "speaking", "goalTemplateIds": ["g-turns"], "disliked": ["act-drum-conversation"] },
+    { "id": "rec-08", "ageBand": "2-4", "communication": "speaking", "goalTemplateIds": ["g-calm"], "liked": ["act-scarf-dance"], "recent": ["act-calm-sway"] },
+    { "id": "rec-09", "ageBand": "8-12", "communication": "speaking", "goalTemplateIds": ["g-signal", "g-sound-comfort"] },
+    { "id": "rec-10", "ageBand": "5-7", "communication": "some-words", "goalTemplateIds": ["g-routine"], "minutes": 10 }
+  ]
+}

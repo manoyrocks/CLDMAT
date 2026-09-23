@@ -1,0 +1,12 @@
+{
+  "version": "1.0.0",
+  "notes": "Synthetic 10-week logs. 'pattern' drives generated daily scores; 'expect' is the only acceptable trend word.",
+  "cases": [
+    { "id": "sum-01", "pattern": "flat", "base": 2, "expect": "about the same" },
+    { "id": "sum-02", "pattern": "rise", "base": 1, "expect": "higher" },
+    { "id": "sum-03", "pattern": "fall", "base": 3, "expect": "lower" },
+    { "id": "sum-04", "pattern": "sparse", "base": 2, "expect": "not enough logs" },
+    { "id": "sum-05", "pattern": "noise", "base": 2, "expect": "about the same" },
+    { "id": "sum-06", "pattern": "empty", "base": 0, "expect": "not enough logs" }
+  ]
+}
