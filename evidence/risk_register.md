@@ -22,7 +22,7 @@ Owner: all roles; clinical and safety risks are decided by Evaluators. Score = L
 | R-16 | Browser or OS volume outside app control | 5 | 4 | 20 | In-app ceiling in dBFS is the only guarantee; SPL cannot be guaranteed without calibration; onboarding notice (REQ-SAF-10); native wrapper to read route and volume | Architects | **Open, needs native layer and audiologist** |
 | R-17 | Agents invent clinical facts | 2 | 5 | 10 | Claims-register-only content; open questions logged instead of guessing | All | Mitigated |
 | R-18 | Stimming framed as a target | 2 | 3 | 6 | Goal templates reviewed; banned "normalise"; microcopy guide | Evaluators | Mitigated |
-| R-19 | Recorded caregiver voice played too loud | 2 | 4 | 8 | Recordings are normalised on save and routed through the Child Mode chain | Developers | Mitigated |
+| R-19 | Recorded caregiver voice played too loud | 2 | 4 | 8 | Recordings are peak-normalised to −6 dBFS at playback and routed through the Child Mode chain | Developers | Mitigated |
 | R-20 | Gate bypass (pre-approval) hides unfinished human reviews | 3 | 4 | 12 | Gate records list every human-only item as OUTSTANDING; Gate 4 pilot cannot start until they close | Product owner | Open, tracked |
 
 _Last reviewed at Gate 3 (2026-09-23)._

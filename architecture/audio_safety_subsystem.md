@@ -20,7 +20,7 @@ source(s) ──► voice gain (per-sound fade-in) ──► session gain (user 
 
 | Layer | What it protects against | Guarantee |
 | --- | --- | --- |
-| L1 content normalisation | Loud source files or synthesis | Synthesised voices peak at ≤ −6 dBFS pre-gain; recordings are peak-normalised to −6 dBFS on save (REQ-M3-03) |
+| L1 content normalisation | Loud source files or synthesis | Synthesised voices peak at ≤ −6 dBFS pre-gain; recordings are peak-normalised to −6 dBFS at playback (REQ-M3-03) |
 | L2 session gain clamp | User sets the volume too high; a bug requests a high gain | `clampDb()` and `safeGain()` never return more than the mode ceiling |
 | L3 compressor | Transient build-up from overlapping voices | Soft limiting |
 | L4 hard clipper | Everything upstream failing | **No sample reaching the destination exceeds the ceiling.** This is verified by an offline render test with a +20 dB overdriven source |
