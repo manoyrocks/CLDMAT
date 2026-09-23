@@ -1,4 +1,4 @@
-# QA Report: Phase 3
+# QA Report: Phase 3 (updated after round 2)
 
 Owner: Testers (QA) · Build: commit after Gate 2 · Date: 2026-09-23 · Environment: Linux container, Node 22, headless Chromium 141 (Playwright 1.56.1, Pixel 7 profile)
 
@@ -6,13 +6,14 @@ Owner: Testers (QA) · Build: commit after Gate 2 · Date: 2026-09-23 · Environ
 
 | Suite | Tests | Result |
 | --- | --- | --- |
-| Unit: `packages/core` (safety core) | 46 | ✅ pass; **100% statements, branches, functions and lines** (enforced threshold) |
+| Unit: `packages/core` (safety core) | 47 | ✅ pass; **100% statements, branches, functions and lines** (enforced threshold) |
 | Unit: `packages/content` | 19 | ✅ pass; 100% coverage |
-| Unit: `packages/ai` | 29 | ✅ pass; 100% statements, 98.7% branches |
+| Unit: `packages/ai` (incl. 53 classifier tests with benign decoys) | 82 | ✅ pass |
 | Unit: `apps/web/src/lib` (repository, i18n) | 11 | ✅ pass; 92.6% statements, 98.1% branches |
 | E2E: journeys | 10 | ✅ pass |
 | E2E: Child Mode escape resistance | 8 | ✅ pass |
 | E2E: audio safety | 8 | ✅ pass (see `audio_safety_report.md`) |
+| E2E: live-chain audio (real output meter, fake mic, time limit, cold start) | 8 | ✅ pass |
 | E2E: accessibility (axe + targets + motion + keyboard) | 6 | ✅ pass |
 | E2E: privacy and consent | 5 | ✅ pass |
 | E2E: offline | 1 | ✅ pass |
@@ -45,9 +46,12 @@ The e2e suite was run twice in a row with 39/39 passing both times, so no flaky 
 | DEF-004 | Medium (audio safety, latent) | The volume buttons could raise the gain while exposure audio was playing | Code review | **Fixed** (`exposureActive` lock) |
 | DEF-005 | Medium | Content: the calm-sway activity had no explicit "pause and wait" prompt (REQ-M1-02) | Content unit test | **Fixed** |
 | DEF-006 | Medium (AI) | The coach answered off-topic questions ("school district", "insurance") from a single shared word | AI eval `unknown` set | **Fixed:** an IDF-weighted query-coverage threshold |
+| DEF-008 | Medium (audio safety) | Pressing Stop while a recording was still decoding did not stop it from starting afterwards | Code review, round 2 | **Fixed:** a start token is invalidated by Stop; e2e DEF-008 |
+| DEF-009 | **Critical** (audio safety) | Every quiet level played ~8.5 dB louder than planned. The Web Audio `DynamicsCompressorNode` applies automatic make-up gain (≈ (15 − 15/20) × 0.6 dB for threshold −15 dBFS, ratio 20:1), which cannot be disabled. Exposure at −45 dBFS played at −36.5; the default child volume was pushed up against the ceiling | New live output meter (after the final clipper), round 2. Earlier tests measured the session gain *before* the compressor, so they could not see it | **Fixed:** replaced by a static soft-knee limiter curve (`softLimitCurve`, unity gain below the knee, 100% unit-tested). Calibration e2e now asserts exposure −46.0 dBFS (plan −46) and drum −26.0 dBFS (plan ≤ −26) |
+| DEF-010 | **Critical** (AI safety) | The coach escalated only **2 of 30** paraphrased crises in a blind held-out set; refusals were 14/40 and grounding 31/80. The first classifier matched narrow phrases and was evaluated only on sets written by its author | Independent blind Evaluator set, round 2 | **Fixed:** classifier rebuilt by general category, with SG/PH phrasing; a domain gate and an out-of-scope gate; query expansion; a permanent emergency number on the coach screen. Final result on a second, never-tuned blind set: see `evals/ai_evaluation_report.md` |
 | DEF-007 | Low | The red-flag question about "retrain hearing" claims was falsely blocked by the compliance checker | AI eval (compliance false blocks) | **Fixed:** a term approval scoped to that question |
 
-**Open Critical or High defects: 0.**
+**Open Critical or High defects: 0.** Two further Critical defects (DEF-009, DEF-010) were found in round 2 by *stronger, independent* tests and fixed. The lesson is recorded in ADR-0006: safety claims need measurement at the real output and blind evaluation sets.
 
 ## 4. Known limitations (not defects; tracked for Phase 4)
 
@@ -55,7 +59,7 @@ The e2e suite was run twice in a row with 39/39 passing both times, so no flaky 
 | --- | --- | --- |
 | L-01 | In-app ceilings are in dBFS. Actual SPL depends on the device, route and system volume (risk R-16) | Headphone notice (REQ-SAF-10); native route and volume plugin; audiologist calibration (OQ-01) |
 | L-02 | Tests ran on headless Chromium only; timing figures are not real-device measurements | Device lab (AS-10); WebKit run |
-| L-03 | Graded exposure offers built-in practice sounds only; recording the child's own trigger sound is deferred | Reuse the M3 recording pipeline once clinically reviewed |
+| L-03 | ~~Graded exposure offers built-in sounds only~~ **Closed in round 2:** the family can record the real trigger sound; it is normalised like the built-in sounds and plays at the plan level (e2e L-03) | Clinical review of this feature (packet §B) |
 | L-04 | Caregiver recordings are normalised at playback time; decoding very long recordings on low-end devices is untested | Recording limit is 20 s |
 | L-05 | The parental gate may be solvable by some 10–12 year olds | Recommend OS Guided Access or Screen Pinning; consider a stronger gate after research |
 | L-06 | The therapist portal (REQ-M9-02) and caregiver wellbeing (REQ-M10-01) are not built (LATER scope) | Phase 4+ |

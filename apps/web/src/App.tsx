@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Icon } from './components/Icon';
+import { FEATURES } from './lib/features';
 import { t } from './lib/i18n';
 import { useStore } from './lib/store';
 import { ActivityDetail, ActivityList, RoutineDetail, RoutineList } from './screens/Activities';
@@ -38,7 +39,7 @@ function ParentScreen({ route }: { route: string[] }) {
       if (b === 'check') return <RedFlagChecker />;
       if (b === 'therapist') return <TherapistGuide />;
       return b ? <LearnEntry id={b} /> : <LearnHub />;
-    case 'coach': return <Coach />;
+    case 'coach': return FEATURES.coach ? <Coach /> : <Today />;
     case 'settings': return <Settings />;
     case 'childnotice': return <ChildModeNotice />;
     default: return <Today />;

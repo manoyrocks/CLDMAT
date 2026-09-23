@@ -232,3 +232,41 @@ describe('Progress Summariser', () => {
     expect(templateLabel('x')).toBe('x');
   });
 });
+
+describe('second safety layer (ADR-0007)', () => {
+  const screen = (sig: Partial<{ crisis: boolean; injection: boolean; refusal: 'diagnosis' | 'medication' | 'cure' | null }> | Error) => ({
+    screen: vi.fn(async () => { if (sig instanceof Error) throw sig; return { crisis: false, injection: false, refusal: null, ...sig }; }),
+  });
+
+  it('REQ-AI-04 a screen can add an escalation the lexicon missed', async () => {
+    const r = await ask('How do I do a drum conversation?', { screen: screen({ crisis: true }) });
+    expect(r.kind).toBe('escalation');
+  });
+
+  it('REQ-AI-03 REQ-AI-05 a screen can add a refusal or an injection flag', async () => {
+    expect((await ask('How do I do a drum conversation?', { screen: screen({ refusal: 'medication' }) })).kind).toBe('refusal');
+    expect((await ask('How do I do a drum conversation?', { screen: screen({ injection: true }) })).kind).toBe('scope');
+  });
+
+  it('REQ-AI-04 a screen can never remove a deterministic escalation', async () => {
+    expect((await ask('I want to die', { screen: screen({}) })).kind).toBe('escalation');
+  });
+
+  it('a failing screen falls back to the deterministic rules, and the question is scrubbed first', async () => {
+    const s = screen(new Error('offline'));
+    expect((await ask('How do I do a drum conversation? mail a@b.co', { screen: s })).kind).toBe('answer');
+    expect((s.screen as ReturnType<typeof vi.fn>).mock.calls[0]![0]).toContain('[email]');
+  });
+
+  it('Claude screen sends a schema-constrained request and validates the result', async () => {
+    const { ClaudeSafetyScreen, parseSignal } = await import('./llm-claude');
+    const create = vi.fn(async () => ({ stop_reason: 'end_turn', content: [{ type: 'text', text: '{"crisis":true,"injection":false,"refusal":null}' }] }));
+    const sig = await new ClaudeSafetyScreen({ beta: { messages: { create } } } as never).screen('x');
+    expect(sig).toEqual({ crisis: true, injection: false, refusal: null });
+    expect(create).toHaveBeenCalledWith(expect.objectContaining({ output_config: expect.objectContaining({ format: expect.objectContaining({ type: 'json_schema' }) }) }));
+    expect(() => parseSignal('{"crisis":"yes"}')).toThrow();
+    expect(parseSignal('{"crisis":false,"injection":true,"refusal":"weird"}')).toEqual({ crisis: false, injection: true, refusal: null });
+    const refused = vi.fn(async () => ({ stop_reason: 'refusal', content: [] }));
+    await expect(new ClaudeSafetyScreen({ beta: { messages: { create: refused } } } as never).screen('x')).rejects.toThrow();
+  });
+});

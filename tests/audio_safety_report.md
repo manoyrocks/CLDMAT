@@ -1,4 +1,4 @@
-# Audio-Safety Test Report: Phase 3
+# Audio-Safety Test Report: Phase 3 (updated after round 2)
 
 Owner: Testers (QA) with Architects · Spec: `architecture/audio_safety_subsystem.md` · Date: 2026-09-23
 Any failure in this suite is **Critical** and blocks release (team prompt §8.4).
@@ -19,10 +19,26 @@ Any failure in this suite is **Critical** and blocks release (team prompt §8.4)
 | AS-10 | Routes: speaker, wired, Bluetooth | SPL meter on real devices | ⏳ **OUTSTANDING (human device lab)** | — |
 | NFR-06 | Drum latency < 50 ms | Scheduling offset reported by `engine.hit()` (base latency + 5 ms lookahead) | ✅ **15 ms** in headless Chromium. ⚠️ Output latency on a mid-range Android WebView still needs measuring (spike T-SPIKE-1) | annotation |
 
+## 1b. Round 2: measurements at the real output (after every safety layer)
+An `AnalyserNode` tapped after the final clipper (`engine.outputPeak()`) now measures what actually reaches the speakers. Round 1 measured only the session gain.
+
+| Test | Result |
+| --- | --- |
+| **Calibration (DEF-009 regression)** | Exposure **−46.0 dBFS** (plan −46); child drum **−26.0 dBFS** (plan ≤ −26) |
+| Stress: maximum child volume, song plus 120 overlapping drum and bell hits | Peak **0.2510** vs ceiling 0.2512 (−12 dBFS): never exceeded |
+| AS-09 caregiver recording (fake microphone) played in Child Mode | Peak 0.0501 (−26 dBFS = −6 normalisation + −20 volume) |
+| L-03 exposure using the family's own recording | Peak 0.00501 (−46 dBFS at plan level −45, after −1 dBFS normalisation) |
+| Full-scale recording at −40 / tampered request at +20 dBFS | −41 dBFS / capped at −19 dBFS (exposure ceiling −18, after −1 dBFS normalisation) |
+| DEF-008 Stop during decode | No sound starts (playing = false, output peak 0) |
+| Exposure 5-minute limit (fake clock) | Session auto-completes and is logged |
+| Cold start, CPU throttled 4× | 142–146 ms to an interactive Today screen (budget 2 s) |
+
+**DEF-009 (Critical, fixed):** the Web Audio compressor's automatic make-up gain raised every quiet level by about 8.5 dB. The chain is now L1 normalisation → L2 gain clamp → **L3 static soft-knee limiter** (unity below −15 dBFS in Child Mode) → L4 hard clipper.
+
 ## 2. Defence in depth: verified layers
 - **L1:** synthesis peaks at −6 dBFS; built-in practice sounds are normalised to −1 dBFS before the session gain.
 - **L2:** `clampDb` and `capDb`; 100% branch coverage.
-- **L3:** compressor (threshold = ceiling − 3 dB).
+- **L3:** static soft-knee limiter (`softLimitCurve`): unity gain below ceiling − 3 dB, smooth approach to the ceiling, no make-up gain. It replaced the compressor after DEF-009.
 - **L4:** WaveShaper hard clip at the ceiling. AS-01 shows that L4 holds even when L1 and L2 are deliberately bypassed.
 
 ## 3. Critical defect found and fixed

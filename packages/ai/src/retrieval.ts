@@ -37,6 +37,11 @@ function idfOf(t: string): number {
 const LEXICON: Readonly<Record<string, string>> = {
   tunog: 'sound', ingay: 'noise loud', takot: 'scared fear', natatakot: 'scared fear', anak: 'child', kanta: 'song sing',
   musika: 'music', bahay: 'home', tulog: 'sleep bedtime', iyak: 'upset', magwala: 'meltdown upset', laro: 'play',
+  magsalita: 'talk speak words', salita: 'words', nagsasalita: 'talk speak words',
+  // Malay
+  bunyi: 'sound', bising: 'noise loud', takut: 'scared fear', lagu: 'song sing', muzik: 'music', tidur: 'sleep bedtime', bercakap: 'talk speak words',
+  // English synonyms parents use for evidence questions
+  proof: 'evidence research', scam: 'unproven evidence', legit: 'evidence', studies: 'evidence research',
 };
 const NOISE_SOURCES = /\b(dryers?|blenders?|vacuums?|vaccum|clippers?|drill\w*|renovation|fireworks?|balloons?|popping|sirens?|alarms?|announcements?|beep\w*|horns?|aircon|traffic|trolleys?|crowds?|crowded|mrt|toilets?|flush\w*|band|party|parties|wedding|supermarket|mall|shopping|scraping)\b/;
 

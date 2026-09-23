@@ -13,7 +13,7 @@ Implements: REQ-SAF-01, REQ-SAF-02, REQ-SAF-03, REQ-SAF-04, REQ-SAF-05, REQ-SAF-
 
 ```
 source(s) ──► voice gain (per-sound fade-in) ──► session gain (user volume, slew-limited, ≤ ceiling)
-          ──► compressor (threshold = ceiling − 3 dB, ratio 20:1, attack 1 ms, release 100 ms)
+          ──► soft-knee limiter (static WaveShaper curve: unity gain below ceiling − 3 dB; no make-up gain)
           ──► hard clipper (WaveShaper: clamps every sample to ±ceilingLinear)
           ──► mono downmix (Child Mode) ──► destination
 ```
@@ -22,7 +22,7 @@ source(s) ──► voice gain (per-sound fade-in) ──► session gain (user 
 | --- | --- | --- |
 | L1 content normalisation | Loud source files or synthesis | Synthesised voices peak at ≤ −6 dBFS pre-gain; recordings are peak-normalised to −6 dBFS at playback (REQ-M3-03) |
 | L2 session gain clamp | User sets the volume too high; a bug requests a high gain | `clampDb()` and `safeGain()` never return more than the mode ceiling |
-| L3 compressor | Transient build-up from overlapping voices | Soft limiting |
+| L3 soft-knee limiter | Transient build-up from overlapping voices | Smooth limiting towards the ceiling with **unity gain below the knee**. It replaced a `DynamicsCompressorNode`, whose automatic make-up gain added ~8.5 dB to every quiet level (DEF-009) |
 | L4 hard clipper | Everything upstream failing | **No sample reaching the destination exceeds the ceiling.** This is verified by an offline render test with a +20 dB overdriven source |
 
 ## 3. Parameters (provisional until audiologist sign-off, OQ-01)
@@ -63,6 +63,9 @@ REQ-SAF-03 is applied to the **session gain**. Whenever sound starts after at le
 - **User volume** is clamped into [floor, ceiling] (`clampDb`).
 - **Explicit exposure levels** are only ever clamped **down**: `min(level, exposure ceiling, mode ceiling)`, with −60 dBFS as the minimum. An early build clamped exposure through the user-volume floor (−36 dBFS), so a −45 dBFS step played 9 dB too loud. The e2e test AS-07 caught this before release; see `tests/qa_report.md`.
 - While exposure audio plays, the volume buttons cannot raise the level (`exposureActive` lock).
+
+### 4.3 Measuring at the output
+Levels are verified with an `AnalyserNode` tapped after the final clipper (`engine.outputPeak()`), never only by reading gain parameters. A calibration e2e test asserts that the planned and measured levels match.
 
 ## 5. Stop path (REQ-SAF-04)
 `engine.stopAll()` is synchronous. It (1) cancels scheduled values on the session gain, (2) ramps to 0 over 30 ms, (3) stops and disconnects all sources at +60 ms, and (4) records `performance.now()` deltas for tests. The Stop control is a native `<button>` fixed at the top of every child-facing screen. It has a `pointerdown` handler, which fires before `click`, and responds to the keyboard.

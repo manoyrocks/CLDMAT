@@ -5,6 +5,7 @@ import { planNotes, recommend } from '@harmony/ai';
 import { engine } from '../audio/engine';
 import { Icon } from '../components/Icon';
 import { PlayButton, Screen, Segmented, TierChip } from '../components/ui';
+import { FEATURES } from '../lib/features';
 import { t } from '../lib/i18n';
 import { today, uid, useStore } from '../lib/store';
 
@@ -54,7 +55,7 @@ export function Today() {
       </div>
       <div className="row" style={{ marginTop: 16 }}>
         <button className="btn" onClick={() => (data.settings.headphoneNoticeSeen ? enterChildMode() : go('childnotice'))}><Icon name="child" /> {t('today.childMode')}</button>
-        <button className="btn" onClick={() => go('coach')}><Icon name="chat" /> {t('today.coach')}</button>
+        {FEATURES.coach && <button className="btn" onClick={() => go('coach')}><Icon name="chat" /> {t('today.coach')}</button>}
         <button className="btn" onClick={() => go('routines')}><Icon name="day" /> {t('nav.routines')}</button>
       </div>
     </Screen>

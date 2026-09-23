@@ -97,13 +97,27 @@ export function postCheck(text: string, allowedIds: readonly string[]): string[]
   return problems;
 }
 
+// ---- optional second safety layer (ADR-0007) ------------------------------------------------------------
+/** Safety signals from an additional screen (e.g. a model-based classifier behind the backend proxy). */
+export interface SafetySignal { crisis: boolean; injection: boolean; refusal: RefusalCategory | null }
+export interface SafetyScreen { screen(question: string): Promise<SafetySignal> }
+
+/**
+ * Merges the deterministic classification with a screen's signals. A screen can only ADD an escalation, a refusal
+ * or an injection flag, never remove one the deterministic rules raised.
+ */
+export function mergeSignals(base: ReturnType<typeof classify>, extra: SafetySignal | null): ReturnType<typeof classify> {
+  if (!extra) return base;
+  return { ...base, crisis: base.crisis || extra.crisis, injection: base.injection || extra.injection, refusal: base.refusal ?? extra.refusal };
+}
+
 // ---- public API --------------------------------------------------------------------------------
 export interface AskOptions { readonly region?: string }
 
 /** Runs the deterministic pipeline. Returns a final reply, or the retrieval hits for composition. */
-function pipeline(question: string, opts: AskOptions): { final: CoachReply } | { hits: Hit[]; supportive: boolean } {
+function pipeline(question: string, opts: AskOptions, extra: SafetySignal | null = null): { final: CoachReply } | { hits: Hit[]; supportive: boolean } {
   const q = question.slice(0, MAX_QUESTION_CHARS);
-  const c = classify(q);
+  const c = mergeSignals(classify(q), extra);
   if (c.crisis) return { final: reply('escalation', escalationText(opts.region ?? 'SG'), { category: 'crisis' }) };
   if (c.injection) return { final: reply('scope', SCOPE_TEXT, { category: 'injection' }) };
   if (c.refusal) {
@@ -124,8 +138,10 @@ export function askOffline(question: string, opts: AskOptions = {}): CoachReply 
 }
 
 /** Opt-in LLM mode. Every failure path falls back to the extractive answer. */
-export async function ask(question: string, opts: AskOptions & { llm?: LlmClient } = {}): Promise<CoachReply> {
-  const r = pipeline(question, opts);
+export async function ask(question: string, opts: AskOptions & { llm?: LlmClient; screen?: SafetyScreen } = {}): Promise<CoachReply> {
+  // A failing screen never blocks an answer: the deterministic rules and the always-visible emergency line still apply.
+  const extra = opts.screen ? await opts.screen.screen(scrubPii(question.slice(0, MAX_QUESTION_CHARS))).catch(() => null) : null;
+  const r = pipeline(question, opts, extra);
   if ('final' in r) return r.final;
   const fallback = extractive(r.hits, r.supportive);
   if (!opts.llm) return fallback;

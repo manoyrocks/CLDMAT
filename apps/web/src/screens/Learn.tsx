@@ -5,6 +5,7 @@ import {
 } from '@harmony/content';
 import { Icon } from '../components/Icon';
 import { Disclaimer, Screen, Segmented, TierChip } from '../components/ui';
+import { FEATURES } from '../lib/features';
 import { t } from '../lib/i18n';
 import { useStore } from '../lib/store';
 
@@ -27,7 +28,7 @@ export function LearnHub() {
       <div className="row" style={{ marginTop: 16 }}>
         <button className="btn primary" onClick={() => go('learn/check')}><Icon name="target" /> {t('learn.checker')}</button>
         <button className="btn" onClick={() => go('learn/therapist')}>{t('learn.therapist')}</button>
-        <button className="btn" onClick={() => go('coach')}><Icon name="chat" /> {t('today.coach')}</button>
+        {FEATURES.coach && <button className="btn" onClick={() => go('coach')}><Icon name="chat" /> {t('today.coach')}</button>}
       </div>
       <Section cat="about" title={t('learn.about')} />
       <Section cat="tiers" title={t('learn.tiers')} />

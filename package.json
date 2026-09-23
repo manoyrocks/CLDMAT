@@ -17,7 +17,8 @@
     "dev": "npm run dev -w apps/web",
     "build": "npm run build -w apps/web",
     "e2e": "npm run build && playwright test -c apps/web/playwright.config.ts",
-    "check": "npm run typecheck && npm test && npm run eval && npm run e2e && npm run trace:strict"
+    "check": "npm run typecheck && npm test && npm run eval && npm run e2e && npm run trace:strict",
+    "build:pilot": "VITE_FEATURE_COACH=false npm run build -w apps/web"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.0",
